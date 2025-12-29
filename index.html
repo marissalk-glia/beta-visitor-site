@@ -5,6 +5,37 @@
   <title>Hello World Glia</title>
 </head>
 <body>
+
+  <div id="signup-container">
+    <input type="email" id="email" placeholder="Enter your email" required>
+    <button type="button" id="submit">Submit</button>
+  </div>
+
   <script src="//api.beta.glia.com/salemove_integration.js"></script>
+
+  <script>
+    sm.getApi({version: 'v1'}).then(function(glia) {
+      
+      function addSubmitListener(engagement) {
+        var submit = document.querySelector('#submit');
+        var emailInput = document.querySelector('#email');
+
+        if (submit) {
+          submit.addEventListener('click', function() {
+            var email = emailInput.value;
+            // Record the event in the Glia engagement timeline
+            engagement.recordEvent({
+              message: 'Visitor signed up with e-mail: ' + email
+            });
+            console.log('Event recorded for:', email);
+          });
+        }
+      }
+
+      // Listen for the start of an engagement to attach the listener
+      glia.addEventListener(glia.EVENTS.ENGAGEMENT_START, addSubmitListener);
+    });
+  </script>
+
 </body>
 </html>
