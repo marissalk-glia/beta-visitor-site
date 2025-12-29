@@ -15,6 +15,26 @@
 
   <script>
     sm.getApi({version: 'v1'}).then(function(glia) {
+      // --- 1. Detect Geo-Location and Set Custom Attribute ---
+      fetch('https://ipapi.co/json/')
+        .then(response => response.json())
+        .then(data => {
+          const countryCode = data.country_code; // e.g., "EE", "US", "DE"
+          const locationValue = (countryCode === 'EE') ? 'EE' : 'other';
+
+          // Update Visitor Information in Glia
+          glia.updateInformation({
+            customAttributesUpdateMethod: 'merge',
+            customAttributes: {
+              location: locationValue
+            }
+          }).then(function() {
+            console.log('Glia attribute set: location =', locationValue);
+          });
+        })
+        .catch(err => console.error('Error fetching location:', err));
+
+      // --- 2. Signup Form Listener ---
       
       function addSubmitListener(engagement) {
         var submit = document.querySelector('#submit');
